@@ -48,6 +48,7 @@ public class HomeController {
 
     private void expireCookie(HttpServletResponse response, String cookieName) {
         Cookie cookie = new Cookie(cookieName, null);
+        // 쿠키 날리는 건.. setMaxAge(0);으로 해준다.
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
