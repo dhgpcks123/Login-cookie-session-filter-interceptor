@@ -27,7 +27,7 @@ public class SessionManager {
         String sessionId = UUID.randomUUID().toString();
         sessionStore.put(sessionId, value);
 
-        //make Cookie
+        //make response Cookie
         Cookie mySessionCookie = new Cookie(SESSION_COOKIE_NAME, sessionId);
         response.addCookie(mySessionCookie);
     }

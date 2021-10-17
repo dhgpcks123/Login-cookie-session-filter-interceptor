@@ -22,9 +22,11 @@ class SessionManagerTest {
 
         // 세션 생성
         Member member = new Member();
+        member.setLoginId("chan");
+        member.setPassword("1234");
         sessionManager.createSession(member, response);
 
-        // check cookie
+        // request 요청
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setCookies(response.getCookies());
         System.out.println("request : " +request);
