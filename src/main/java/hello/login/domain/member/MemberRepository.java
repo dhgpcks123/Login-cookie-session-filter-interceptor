@@ -20,6 +20,11 @@ public class MemberRepository {
     }
 
     public Member findById(Long id){
+        System.out.println("MemberRepository.findById");
+        System.out.println(id);
+        System.out.println(store);
+        System.out.println(store.get(0));
+        System.out.println("MemberRepository.findById");
         return store.get(id);
     }
 
