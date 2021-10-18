@@ -10,10 +10,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @Slf4j
 @Controller
@@ -41,7 +43,7 @@ public class HomeController {
         model.addAttribute("member", loginMember);
         return "loginHome";
     }
-    @GetMapping("/")
+//    @GetMapping("/")
     public String homeLoginV2(HttpServletRequest request, Model model){
 
         //세션 관리자 정보 조회
@@ -50,9 +52,39 @@ public class HomeController {
         if(member == null){
             return "home";
         }
-
-
         model.addAttribute("member", member);
+        return "loginHome";
+    }
+//    @GetMapping("/")
+    public String homeLoginV3(HttpServletRequest request, Model model){
+
+        HttpSession session = request.getSession(false);
+        //page 접근했다. 어 로그인 안했는데도 session 만들어?
+        // 그렇지 않기 위해서 false사용
+        if(session == null){
+            return "home";
+        }
+        Member loginMember = (Member)session.getAttribute(SessionConst.LOGIN_MEMBER);
+        //session에 회원데이터 없으면 home
+        if(loginMember == null){
+            return "home";
+        }
+        //session에 회원데이터 있으니 model에 값 넣고 넘겨줌.
+        model.addAttribute("member", loginMember);
+        return "loginHome";
+    }
+
+    @GetMapping("/")
+    public String homeLoginV3Spring(
+            @SessionAttribute(name = SessionConst.LOGIN_MEMBER, required = false) Member loginMember, Model model){
+
+        // 원래 로직은 session null인 경우, session.getAttribute했을 때 null인 경우
+        // 둘다 return "home"해줬는데
+        // 한번에 체크 되어서 null 보면 된다.
+        if(loginMember == null){
+            return "home";
+        }
+        model.addAttribute("member", loginMember);
         return "loginHome";
     }
 
@@ -62,9 +94,19 @@ public class HomeController {
         expireCookie(response, "memberId");
         return "redirect:/";
     }
-    @PostMapping("/logout")
+//    @PostMapping("/logout")
     public String logoutV2(HttpServletRequest request){
         sessionManager.expire(request);
+        return "redirect:/";
+    }
+
+    @PostMapping("/logout")
+    public String logoutV3(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if(session != null){
+            session.invalidate();
+            //session 이랑 그 안에 있는 데이터 다 날려줍니다.
+        }
         return "redirect:/";
     }
 
